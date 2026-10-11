@@ -121,25 +121,19 @@ class DatabaseClient {
         if (lastErr) {
           this.lastError = lastErr;
 
-          // PROTECCIÓN Y RESILIENCIA:
-          // Si el cluster remoto está inaccesible (ej. conexión cerrada o timeout),
-          // permitimos el fallback para que Cloud Run supere los health probes y la aplicación no quede caída.
-          const allowFallback = config.isTestMode || config.allowMemoryFallback || process.env.ALLOW_MEMORY_FALLBACK !== 'false';
-
-          if (!allowFallback && config.nodeEnv === 'production') {
-            const errorMsg = `[MongoDB] Conexión a MongoDB Atlas falló en producción (${lastErr.message}). ` +
-              `Arranque detenido. Prohibido fallback a memoria en producción para proteger integridad y persistencia de datos.`;
+          // PROTECCIÓN ESTRICTA EN PRODUCCIÓN (VPS IONOS + MongoDB Atlas):
+          // En producción (NODE_ENV === 'production') queda estrictamente prohibido usar memoria efímera para proteger la persistencia de datos reales.
+          if (config.nodeEnv === 'production') {
+            const errorMsg = `[MongoDB] Error crítico: Conexión a MongoDB Atlas falló en producción (${lastErr.message}). ` +
+              `Arranque detenido. Prohibido fallback a memoria en producción en VPS IONOS para proteger integridad y persistencia de datos reales. ` +
+              `Verifica tus credenciales MONGODB_URI en .env y la lista de acceso IP (Network Access) en MongoDB Atlas.`;
             console.error(errorMsg);
             throw new Error(errorMsg);
           }
 
-          if (!allowFallback) {
-            const errorMsg = `[MongoDB] Conexión a base de datos persistente falló (${lastErr.message}). ` +
-              `Fallback a memoria cancelado para impedir pérdida de datos de clientes y órdenes. ` +
-              `Verifica tus credenciales en Secrets, IP Access List de MongoDB Atlas o el estado del cluster.`;
-            console.error(errorMsg);
-            throw new Error(errorMsg);
-          }
+          // En desarrollo / preview / tests (AI Studio dev environment), permitir el fallback a memoria
+          // si la base de datos remota está inaccesible o tiene ECONNRESET, para que la app se mantenga activa y sin errores.
+          const allowFallback = true;
 
           console.warn(`[MongoDB] ADVERTENCIA: Fallback a memoria permitido explícitamente (${lastErr.message}). ` +
             `Los datos almacenados serán volátiles y se perderán al reiniciar.`);

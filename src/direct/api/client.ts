@@ -24,11 +24,28 @@ import {
 } from '../types.ts';
 
 class DirectApiClient {
-  private baseUrl = '/api';
+  private baseUrl: string;
   private token: string | null = null;
 
   constructor() {
     this.token = typeof window !== 'undefined' ? localStorage.getItem('direct_token') : null;
+    
+    // Configuración dinámica de API Base:
+    // 1. Si VITE_API_URL está definido, usarlo.
+    // 2. Si el host es un subdominio de directaurante.com (ej. cliente., repartidores., restaurantes., master.)
+    //    y no es api.directaurante.com ni localhost, apuntar a https://api.directaurante.com/api
+    // 3. De lo contrario, usar relativo '/api'
+    if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
+      this.baseUrl = `${import.meta.env.VITE_API_URL.replace(/\/+$/, '')}/api`;
+    } else if (
+      typeof window !== 'undefined' &&
+      window.location.hostname.endsWith('directaurante.com') &&
+      !window.location.hostname.startsWith('api.')
+    ) {
+      this.baseUrl = `${window.location.protocol}//api.directaurante.com/api`;
+    } else {
+      this.baseUrl = '/api';
+    }
   }
 
   public setToken(token: string | null) {

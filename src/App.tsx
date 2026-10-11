@@ -34,13 +34,19 @@ const AppContent: React.FC = () => {
   // Guard against unauthorized view restoration once user state is confirmed
   React.useEffect(() => {
     if (isLoadingUser) return;
+    const hostname = typeof window !== 'undefined' ? window.location.hostname.toLowerCase() : '';
+    const isMasterSubdomain = hostname.startsWith('master.');
+    const isRestaurantSubdomain = hostname.startsWith('restaurantes.');
     const isRestaurantPanel = typeof window !== 'undefined' && (
+      isRestaurantSubdomain ||
       window.location.pathname.includes('restaurant-panel') ||
       window.location.search.includes('view=restaurant')
     );
     if (!user) {
       if (activeView === 'master_noc') {
-        setActiveView('explore');
+        if (!isMasterSubdomain) {
+          setActiveView('explore');
+        }
         setIsAuthOpen(true);
       } else if (activeView === 'restaurant_portal' && !isRestaurantPanel) {
         // Prompt login if on client path

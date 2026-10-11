@@ -35,6 +35,27 @@ export function getCorsOptions(overrideOrigin?: string): cors.CorsOptions {
         .map((o) => o.trim())
         .filter(Boolean);
 
+      // Subdominios oficiales de producción Directaurante
+      const defaultProductionOrigins = [
+        'https://cliente.directaurante.com',
+        'http://cliente.directaurante.com',
+        'https://repartidores.directaurante.com',
+        'http://repartidores.directaurante.com',
+        'https://restaurantes.directaurante.com',
+        'http://restaurantes.directaurante.com',
+        'https://master.directaurante.com',
+        'http://master.directaurante.com',
+        'https://api.directaurante.com',
+        'http://api.directaurante.com',
+        'https://directaurante.com',
+        'http://directaurante.com',
+      ];
+      for (const prodOrigin of defaultProductionOrigins) {
+        if (!allowedOrigins.includes(prodOrigin)) {
+          allowedOrigins.push(prodOrigin);
+        }
+      }
+
       if (config.appUrl) {
         const cleanApp = config.appUrl.replace(/\/+$/, '');
         if (cleanApp && !allowedOrigins.includes(cleanApp)) {

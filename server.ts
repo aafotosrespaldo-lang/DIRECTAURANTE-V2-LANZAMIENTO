@@ -31,11 +31,19 @@ async function startServer() {
   if (isProduction) {
     const distPath = path.basename(__dirname) === 'dist' ? __dirname : path.resolve(__dirname, 'dist');
     app.use(express.static(distPath));
-    app.get('/restaurant-panel*', (req, res) => {
-      res.sendFile(path.join(distPath, 'restaurant-panel', 'index.html'));
-    });
+
+    // Si el host es restaurantes.directaurante.com o la ruta es /restaurant-panel, servir el panel de restaurante
     app.get('*', (req, res, next) => {
       if (req.path.startsWith('/api') || req.path === '/health') return next();
+
+      const host = (req.hostname || req.headers.host || '').toLowerCase();
+      const isRestaurantSubdomain = host.startsWith('restaurantes.');
+      const isRestaurantPanelPath = req.path.startsWith('/restaurant-panel');
+
+      if (isRestaurantSubdomain || isRestaurantPanelPath) {
+        return res.sendFile(path.join(distPath, 'restaurant-panel', 'index.html'));
+      }
+
       res.sendFile(path.join(distPath, 'index.html'));
     });
   } else {
@@ -66,8 +74,9 @@ async function startServer() {
     await initDb();
   } catch (dbErr: any) {
     console.error('[Directaurante Core V2] Error al conectar base de datos:', dbErr.message);
-    // En Cloud Run, no terminamos el proceso HTTP: el servidor se mantiene escuchando en el puerto 3000
-    // y /health reportará el estado degraded/reintento sin reiniciar en bucle el contenedor.
+    if (isProduction) {
+      throw dbErr;
+    }
   }
 }
 

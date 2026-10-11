@@ -44,9 +44,17 @@ class RealtimeClient {
     }
 
     try {
-      const baseUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL)
-        ? import.meta.env.VITE_API_URL.replace(/\/$/, '')
-        : '';
+      let baseUrl = '';
+      if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
+        baseUrl = import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+      } else if (
+        typeof window !== 'undefined' &&
+        window.location.hostname.endsWith('directaurante.com') &&
+        !window.location.hostname.startsWith('api.')
+      ) {
+        baseUrl = `${window.location.protocol}//api.directaurante.com`;
+      }
+
       const url = token
         ? `${baseUrl}/api/realtime/stream?token=${encodeURIComponent(token)}`
         : `${baseUrl}/api/realtime/stream?token=guest`;

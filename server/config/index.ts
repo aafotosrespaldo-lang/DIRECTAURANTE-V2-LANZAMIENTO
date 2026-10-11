@@ -69,7 +69,14 @@ export const config = {
     if (process.env.NODE_ENV === 'production') {
       if (!raw) {
         throw new Error(
-          'Error de seguridad crítico: MONGODB_URI es obligatorio en producción y debe configurarse mediante Secrets. Directaurante Core V2 no puede iniciar sin una base de datos persistente.'
+          'Error de seguridad crítico: MONGODB_URI es obligatorio en producción y debe apuntar a tu cluster MongoDB Atlas (mongodb+srv://). Directaurante Core V2 no puede iniciar sin una base de datos persistente.'
+        );
+      }
+      if (!raw.startsWith('mongodb+srv://') && !raw.includes('.mongodb.net')) {
+        // En VPS IONOS con MongoDB Atlas, la URI oficial debe ser Atlas SRV
+        console.warn(
+          '[MongoDB] Advertencia: MONGODB_URI en producción debería ser una cadena MongoDB Atlas (mongodb+srv://...mongodb.net). Se usará la URI configurada: ' +
+            raw.replace(/\/\/[^@]+@/, '//***:***@')
         );
       }
     }
@@ -80,11 +87,15 @@ export const config = {
     return cleanEnvStr(process.env.MONGODB_DB_NAME) || 'directaurante';
   },
   get allowMemoryFallback(): boolean {
+    // En producción en VPS IONOS, queda estrictamente prohibido el almacenamiento temporal en memoria
+    if (process.env.NODE_ENV === 'production') {
+      return false;
+    }
     if (process.env.ALLOW_MEMORY_FALLBACK !== undefined) {
       return process.env.ALLOW_MEMORY_FALLBACK === 'true';
     }
-    // In development/preview environments, allow fallback to memory so the app never crashes if remote DB is down
-    return process.env.NODE_ENV !== 'production';
+    // En entornos de desarrollo o tests, permitir fallback para no detener flujos locales
+    return true;
   },
   isTestMode:
     process.env.NODE_ENV === 'test' ||

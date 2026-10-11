@@ -109,13 +109,17 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [activeView, setActiveView] = useState<AppView>(() => {
     if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname.toLowerCase();
       const search = window.location.search.toLowerCase();
       const hash = window.location.hash.toLowerCase();
       const pathname = window.location.pathname.toLowerCase();
-      if (search.includes('view=driver') || hash.includes('driver')) {
+
+      // Detección automática por subdominio oficial de producción:
+      if (hostname.startsWith('repartidores.') || search.includes('view=driver') || hash.includes('driver')) {
         return 'driver_app';
       }
       if (
+        hostname.startsWith('restaurantes.') ||
         pathname.includes('restaurant-panel') ||
         search.includes('view=restaurant_portal') ||
         search.includes('view=restaurant') ||
@@ -125,9 +129,13 @@ export const AppContextProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       ) {
         return 'restaurant_portal';
       }
-      if (search.includes('view=master') || hash.includes('master') || hash.includes('noc')) {
+      if (hostname.startsWith('master.') || search.includes('view=master') || hash.includes('master') || hash.includes('noc')) {
         return 'master_noc';
       }
+      if (hostname.startsWith('cliente.')) {
+        return 'explore';
+      }
+
       if (search.includes('view=orders') || hash.includes('orders')) {
         return 'orders';
       }
