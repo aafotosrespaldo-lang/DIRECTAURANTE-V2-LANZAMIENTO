@@ -1,0 +1,50 @@
+{
+  "id": "/restaurant-panel",
+  "name": "Directaurante - Portal Restaurante",
+  "short_name": "Restaurante",
+  "description": "Comandera oficial en vivo, gestión de pedidos y analítica para restaurantes Directaurante",
+  "start_url": "/restaurant-panel/",
+  "scope": "/restaurant-panel/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "theme_color": "#05268F",
+  "background_color": "#060919",
+  "categories": ["food", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/restaurant-panel/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/restaurant-panel/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/restaurant-panel/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Comandas en Vivo",
+      "short_name": "Comandas",
+      "description": "Ver comandas y pedidos entrantes en cocina",
+      "url": "/restaurant-panel/?tab=pedidos",
+      "icons": [{ "src": "/restaurant-panel/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ventas y CRM",
+      "short_name": "Ventas",
+      "description": "Resumen de ventas y métricas",
+      "url": "/restaurant-panel/?tab=ventas",
+      "icons": [{ "src": "/restaurant-panel/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "Directaurante Core V2",
+  "description": "Plataforma gastronómica directa con Core V2 desacoplado, cálculo soberano, idempotencia y catálogo multirrestaurante.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

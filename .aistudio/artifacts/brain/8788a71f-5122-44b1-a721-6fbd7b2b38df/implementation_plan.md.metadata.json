@@ -1,0 +1,6 @@
+{
+  "summary":  "Plan de implementación detallado para la migración e integración completa de Directaurante Core V2 + Client V2 desde el repositorio público de GitHub (aaphgy-blip/Core), abarcando arquitectura Full-Stack con backend Express, base de datos MongoDB (Atlas + fallback embebido), frontend React 19 y catálogo preconfigurado.",
+  "updatedAt":  "2026-10-07T17:33:05.079562603Z",
+  "requestFeedback":  true,
+  "userFacing":  true
+}

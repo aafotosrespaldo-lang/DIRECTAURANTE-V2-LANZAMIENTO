@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#05268F" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Restaurante" />
+    
+    <!-- PWA Web App Manifest -->
+    <link rel="manifest" href="/restaurant-panel/manifest.json" />
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/restaurant-panel/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/restaurant-panel/pwa-512x512.png" />
+    <link rel="apple-touch-icon" href="/restaurant-panel/apple-touch-icon.png" />
+    
+    <title>Directaurante - Portal Restaurante & Comandera</title>
+    <meta name="description" content="Panel oficial y comandera para restaurantes de Directaurante. Gestión de pedidos en tiempo real, cambio de estado y analítica." />
+    <meta property="og:title" content="Directaurante - Portal Restaurante" />
+    <meta property="og:description" content="Panel oficial y comandera para restaurantes de Directaurante." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    
+    <script>
+      // Register Service Worker for PWA installability
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/restaurant-panel/sw.js', { scope: '/restaurant-panel/' })
+            .then(function(reg) {
+              console.log('[PWA] Service Worker registrado para Restaurant Panel:', reg.scope);
+            })
+            .catch(function(err) {
+              console.warn('[PWA] Error al registrar Service Worker:', err);
+            });
+        });
+      }
+    </script>
+  </head>
+  <body class="bg-[#060919] text-white selection:bg-[#05268F] selection:text-[#FFD318]">
+    <div id="root"></div>
+    <script type="module" src="/restaurant-panel/main.tsx"></script>
+  </body>
+</html>
